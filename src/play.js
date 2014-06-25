@@ -1,7 +1,7 @@
 Game.Play = function (game) { };
 
 A.paddleSpeed = {
-    x: 20,
+    x: 50,
     y: 500,
 };
 A.ballSpeed = 200;
