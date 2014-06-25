@@ -23,8 +23,8 @@ Game.Play.prototype = {
     },
 
     update: function () {
-	game.physics.arcade.collide(A.balls, [A.paddle, A.bounds]);
-	A.balls.forEachAlive(this.ballUpdate, this);
+	game.physics.arcade.collide(A.balls, [A.paddle, A.bounds], this.animateBallCollide, null, this);
+	A.balls.forEachAlive(this.ballCollideMiddle, this);
 
 	this.controls();
 
@@ -87,7 +87,7 @@ Game.Play.prototype = {
 	game.physics.arcade.enable(A.paddle);
 	A.paddle.body.collideWorldBounds = true;
 	A.paddle.body.immovable = true;
-	A.paddle.scale.y = 250 / A.paddle.height;
+//	A.paddle.scale.y = 250 / A.paddle.height; //
     },
 
     createBall: function (x, y, theta, color) {
@@ -105,11 +105,6 @@ Game.Play.prototype = {
 	ball.body.velocity.y = A.ballSpeed * Math.sin(theta);
     },
 
-    ballUpdate: function (ball) {
-	this.ballCollideMiddle(ball);
-	this.animateBallCollide(ball);
-    },
-
     ballCollideMiddle: function (ball) {
 	if (Math.abs(ball.x - A.paddle.x) <= ball.body.halfWidth) {
 	    this.endPlay();
@@ -117,10 +112,12 @@ Game.Play.prototype = {
 	}
     },
 
-    animateBallCollide: function (ball) {
-	if (ball.body.touching.left) {
-	    ball.scale.x = 0.7;
-	    game.add.tween(ball.scale).to({x: 1}, 150, null, true, 0, false, false);
+    animateBallCollide: function (obj1, obj2) {
+	var ball = obj2.parent === A.balls ? obj2 : obj1;
+	var hitTime = 70;
+
+	if (ball.body.touching.left || ball.body.touching.right || ball.body.touching.up || ball.body.touching.down) {
+	    game.add.tween(ball.scale).to({x: 1.2, y: 1.2}, hitTime, null, true, 0, false, false).to({x: 1, y: 1}, hitTime, null, true, hitTime, false, false);
 	}
     },
 
