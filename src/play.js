@@ -12,6 +12,7 @@ Game.Play.prototype = {
 	A.keys = game.input.keyboard.createCursorKeys();
 
 	this.createBackground();
+	this.createBounds();
 
 	A.balls = game.add.group();
 	A.balls.enableBody = true;
@@ -22,9 +23,8 @@ Game.Play.prototype = {
     },
 
     update: function () {
-	game.physics.arcade.collide(A.balls, A.paddle);
-	game.physics.arcade.collide(A.balls, A.balls);
-	A.balls.forEachAlive(this.ballCollideMiddle, this);
+	game.physics.arcade.collide(A.balls, [A.paddle, A.bounds]);
+	A.balls.forEachAlive(this.ballUpdate, this);
 
 	this.controls();
 
@@ -56,13 +56,38 @@ Game.Play.prototype = {
 	game.physics.arcade.enable(A.background);
     },
 
+    createBounds: function () {
+	var bounds = {};
+
+	A.bounds = game.add.group();
+	A.bounds.enableBody = true;
+
+	bounds.left = A.bounds.create(0, 0, 'paddle');
+	bounds.left.scale.y = A.h / 100;
+	bounds.left.anchor.x = 1;
+	bounds.left.body.immovable = true;
+
+	bounds.right = A.bounds.create(A.w, 0, 'paddle');
+	bounds.right.scale.y = A.h / 100;
+	bounds.right.body.immovable = true;
+
+	bounds.up = A.bounds.create(0, 0, 'paddle');
+	bounds.up.scale.x = A.w / 18;
+	bounds.up.anchor.y = 1;
+	bounds.up.body.immovable = true;
+
+	bounds.down = A.bounds.create(0, A.h, 'paddle');
+	bounds.down.scale.x = A.w / 18;
+	bounds.down.body.immovable = true;
+    },
+
     createPaddle: function () {
 	A.paddle = game.add.sprite(A.w / 2, A.h / 2, 'paddle');
 	A.paddle.anchor.setTo(0.5, 0.5);
 	game.physics.arcade.enable(A.paddle);
 	A.paddle.body.collideWorldBounds = true;
 	A.paddle.body.immovable = true;
-//	A.paddle.scale.y = 250 / A.paddle.height;
+	A.paddle.scale.y = 250 / A.paddle.height;
     },
 
     createBall: function (x, y, theta, color) {
@@ -72,7 +97,6 @@ Game.Play.prototype = {
 
 	ball = A.balls.create(x, y, 'ball-' + color);
 	ball.anchor.setTo(0.5, 0.5);
-	ball.body.collideWorldBounds = true;
 	ball.body.bounce.setTo(1.01, 1.01);
 
 	ball.color = color;
@@ -81,10 +105,22 @@ Game.Play.prototype = {
 	ball.body.velocity.y = A.ballSpeed * Math.sin(theta);
     },
 
+    ballUpdate: function (ball) {
+	this.ballCollideMiddle(ball);
+	this.animateBallCollide(ball);
+    },
+
     ballCollideMiddle: function (ball) {
 	if (Math.abs(ball.x - A.paddle.x) <= ball.body.halfWidth) {
 	    this.endPlay();
 	    ball.kill();
+	}
+    },
+
+    animateBallCollide: function (ball) {
+	if (ball.body.touching.left) {
+	    ball.scale.x = 0.7;
+	    game.add.tween(ball.scale).to({x: 1}, 150, null, true, 0, false, false);
 	}
     },
 
