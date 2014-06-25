@@ -7,7 +7,7 @@ Game.Load.prototype = {
 
 	// load everything
 	game.load.image('background', 'assets/img/background.png');
-	game.load.image('title', 'assets/img/title.png');
+	game.load.spritesheet('title', 'assets/img/title.png', 587, 110, 3);
 
 	game.load.image('paddle', 'assets/img/paddle.png');
 	game.load.image('ball-beige', 'assets/img/ball-beige.png');

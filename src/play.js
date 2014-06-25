@@ -1,7 +1,7 @@
 Game.Play = function (game) { };
 
 A.paddleSpeed = {
-    x: 50,
+    x: 20,
     y: 500,
 };
 A.ballSpeed = 200;
@@ -43,7 +43,7 @@ Game.Play.prototype = {
     },
 
     shift: function (vel) {
-	if (A.paddle.x < 100 || A.paddle.x > A.w - 100) {
+	if ((A.paddle.x < 100 && vel < 0) || (A.paddle.x > A.w - 100 && vel > 0)) {
 	    vel = 0;
 	}
 
@@ -82,7 +82,7 @@ Game.Play.prototype = {
     },
 
     createPaddle: function () {
-	A.paddle = game.add.sprite(A.w / 2, A.h / 2, 'paddle');
+	A.paddle = game.add.sprite(A.w / 2, 61, 'paddle');
 	A.paddle.anchor.setTo(0.5, 0.5);
 	game.physics.arcade.enable(A.paddle);
 	A.paddle.body.collideWorldBounds = true;
