@@ -1,21 +1,22 @@
 Game.Play = function (game) { };
 
-A.paddleSpeed = 500;
+A.paddleSpeed = {
+    x: 50,
+    y: 500,
+};
 A.ballSpeed = 200;
 
 Game.Play.prototype = {
     create: function () {
-	game.add.sprite(0, 0, 'background');
-
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 	A.keys = game.input.keyboard.createCursorKeys();
+
+	this.createBackground();
 
 	A.balls = game.add.group();
 	A.balls.enableBody = true;
 
 	this.createPaddle();
-	this.createBall(0, A.h / 2, 60 - Math.rand(120), 'beige');
-	this.createBall(0, A.h / 2, 60 - Math.rand(120), 'beige');
 	this.createBall(0, A.h / 2, 60 - Math.rand(120), 'beige');
 	this.createBall(A.w, A.h / 2, 240 - Math.rand(120), 'purple');
     },
@@ -33,8 +34,26 @@ Game.Play.prototype = {
     },
 
     controls: function () {
-	A.paddle.body.velocity.y = A.keys.up.isDown ? -A.paddleSpeed : 0;
-	A.paddle.body.velocity.y += A.keys.down.isDown ? A.paddleSpeed : 0;
+	A.paddle.body.velocity.y = A.keys.up.isDown ? -A.paddleSpeed.y : 0;
+	A.paddle.body.velocity.y += A.keys.down.isDown ? A.paddleSpeed.y : 0;
+
+	vel = A.keys.left.isDown ? -A.paddleSpeed.x : 0;
+	vel += A.keys.right.isDown ? A.paddleSpeed.x : 0;	
+	this.shift(vel);
+    },
+
+    shift: function (vel) {
+	if (A.paddle.x < 100 || A.paddle.x > A.w - 100) {
+	    vel = 0;
+	}
+
+	A.paddle.body.velocity.x = vel;
+	A.background.body.velocity.x = vel;
+    },
+
+    createBackground: function () {
+	A.background = game.add.sprite(-300, 0, 'background');
+	game.physics.arcade.enable(A.background);
     },
 
     createPaddle: function () {
@@ -63,8 +82,8 @@ Game.Play.prototype = {
     },
 
     ballCollideMiddle: function (ball) {
-	if (Math.abs(ball.x - A.w / 2) <= ball.body.halfWidth) {
-//	    this.endPlay();
+	if (Math.abs(ball.x - A.paddle.x) <= ball.body.halfWidth) {
+	    this.endPlay();
 	    ball.kill();
 	}
     },
