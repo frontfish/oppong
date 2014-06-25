@@ -6,6 +6,6 @@ Game.End.prototype = {
     },
 
     update: function () {
-
+	game.state.start('Menu');
     }
 };

@@ -1,6 +1,16 @@
-Game = {
-    w: 400,
-    h: 300,
+Game = {};
+
+A = {
+    w: 600,
+    h: 250,
+    color: {
+	purple: '#928897',
+	beige:  '#e2e2cb',
+    },
+};
+
+Math.rand = function (max) {
+    return Math.floor(Math.random() * max);
 };
 
 Game.Boot = function (game) { };
@@ -14,3 +24,4 @@ Game.Boot.prototype = {
 	game.state.start('Load');
     }
 };
+
