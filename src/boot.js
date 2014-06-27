@@ -7,6 +7,7 @@ A = {
 	purple: '#928897',
 	beige:  '#e2e2cb',
     },
+    text: {},
 };
 
 Math.rand = function (max) {

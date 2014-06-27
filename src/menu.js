@@ -12,9 +12,9 @@ Game.Menu.prototype = {
     },
 
     update: function () {
-	if (A.timer && game.time.now - A.timer > 1750) {
+//	if (A.timer && game.time.now - A.timer > 1750) {
 	    game.state.start('Play');
-	}
+//	}
     },
 
     shiftTween: function (object) {

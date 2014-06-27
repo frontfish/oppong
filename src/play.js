@@ -1,7 +1,7 @@
 Game.Play = function (game) { };
 
 A.paddleSpeed = {
-    x: 50,
+    x: 30,
     y: 500,
 };
 A.ballSpeed = 200;
@@ -20,10 +20,11 @@ Game.Play.prototype = {
 	this.createPaddle();
 	this.createBall(0, A.h / 2, 60 - Math.rand(120), 'beige');
 	this.createBall(A.w, A.h / 2, 240 - Math.rand(120), 'purple');
+	this.createScore();
     },
 
     update: function () {
-	game.physics.arcade.collide(A.balls, [A.paddle, A.bounds], this.animateBallCollide, null, this);
+	game.physics.arcade.collide(A.balls, [A.paddle, A.bounds], this.ballCollide, null, this);
 	A.balls.forEachAlive(this.ballCollideMiddle, this);
 
 	this.controls();
@@ -43,7 +44,7 @@ Game.Play.prototype = {
     },
 
     shift: function (vel) {
-	if ((A.paddle.x < 100 && vel < 0) || (A.paddle.x > A.w - 100 && vel > 0)) {
+	if ((A.paddle.x < 150 && vel < 0) || (A.paddle.x > A.w - 150 && vel > 0)) {
 	    vel = 0;
 	}
 
@@ -97,7 +98,7 @@ Game.Play.prototype = {
 
 	ball = A.balls.create(x, y, 'ball-' + color);
 	ball.anchor.setTo(0.5, 0.5);
-	ball.body.bounce.setTo(1.01, 1.01);
+	ball.body.bounce.setTo(1.005, 1.005);
 
 	ball.color = color;
 
@@ -105,6 +106,20 @@ Game.Play.prototype = {
 	ball.body.velocity.y = A.ballSpeed * Math.sin(theta);
     },
 
+    createScore: function () {
+	A.score = {
+	    beige: 0,
+	    purple: 0,
+	};
+
+	A.text.scoreBeige = game.add.text(A.w - 8, 5, '0', { font: '30px Arial', fill: A.color.purple });
+	A.text.scoreBeige.anchor.x = 1;
+	game.physics.arcade.enable(A.text.scoreBeige);
+
+	A.text.scorePurple = game.add.text(10, 8, '0', { font: '30px Arial', fill: A.color.beige });
+	game.physics.arcade.enable(A.text.scorePurple);
+    },
+    
     ballCollideMiddle: function (ball) {
 	if (Math.abs(ball.x - A.paddle.x) <= ball.body.halfWidth) {
 	    this.endPlay();
@@ -112,8 +127,26 @@ Game.Play.prototype = {
 	}
     },
 
-    animateBallCollide: function (obj1, obj2) {
+    ballCollide: function (obj1, obj2) {
 	var ball = obj2.parent === A.balls ? obj2 : obj1;
+
+	if (obj1 === A.paddle || obj2 === A.paddle) {
+	    if (ball.color === 'beige') {
+		A.score.purple++;
+		A.text.scorePurple.text = A.score.purple;
+	    }
+	    if (ball.color === 'purple') {
+		A.score.beige++;
+		A.text.scoreBeige.text = A.score.beige;
+	    }
+
+	    
+	}
+
+	this.animateBallCollide(ball);
+    },
+
+    animateBallCollide: function (ball) {
 	var hitTime = 70;
 
 	if (ball.body.touching.left || ball.body.touching.right || ball.body.touching.up || ball.body.touching.down) {
