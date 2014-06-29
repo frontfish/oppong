@@ -12,9 +12,9 @@ Game.Menu.prototype = {
     },
 
     update: function () {
-//	if (A.timer && game.time.now - A.timer > 1750) {
+	if (A.timer && game.time.now - A.timer > 1750) {
 	    game.state.start('Play');
-//	}
+	}
     },
 
     shiftTween: function (object) {
@@ -32,5 +32,9 @@ Game.Menu.prototype = {
 	this.shiftTween(A.title);
 	this.shiftTween(A.background);
 	A.timer = A.timer || game.time.now;
+
+	if (A.audio) {
+	    A.music.play('', 0, 0.5, true, false);
+	}
     },
 };

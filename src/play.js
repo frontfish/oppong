@@ -104,6 +104,12 @@ Game.Play.prototype = {
 
 	ball.body.velocity.x = A.ballSpeed * Math.cos(theta);
 	ball.body.velocity.y = A.ballSpeed * Math.sin(theta);
+
+	ball.hitSound = function () {
+	    if (A.audio) {
+		A.sounds.hit[ball.color].play('', 0, 0.5, false, true);
+	    }
+	};
     },
 
     createScore: function () {
@@ -138,12 +144,11 @@ Game.Play.prototype = {
 	    if (ball.color === 'purple') {
 		A.score.beige++;
 		A.text.scoreBeige.text = A.score.beige;
-	    }
-
-	    
+	    }	    
 	}
 
 	this.animateBallCollide(ball);
+	ball.hitSound();
     },
 
     animateBallCollide: function (ball) {
@@ -155,6 +160,9 @@ Game.Play.prototype = {
     },
 
     endPlay: function () {
+	if (A.audio) {
+	    A.sounds.die.play('', 0, 0.5, false, true);
+	}
 	game.state.start('End');
     },
 };

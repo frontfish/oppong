@@ -8,6 +8,7 @@ A = {
 	beige:  '#e2e2cb',
     },
     text: {},
+    audio: true,
 };
 
 Math.rand = function (max) {
