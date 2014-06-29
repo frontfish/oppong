@@ -3,10 +3,15 @@ Game.Load = function (game) { };
 Game.Load.prototype = {
     preload: function () {
 	// create loading screen
-	game.stage.backgroundColor = A.color.beige;
-	
-	A.loadSprite = game.add.sprite(0, 0, 'load', 0);
-	game.load.setPreloadSprite(A.loadSprite);
+	A.background = game.add.sprite(-382, 0, 'background');
+
+	A.loadingFrame = game.add.sprite(334, A.h / 2, 'loading-frame');
+	A.loadingFrame.anchor.y = 0.5;
+
+	A.loadingBar = game.add.sprite(334, A.h / 2, 'loading-bar');
+	A.loadingBar.anchor.y = 0.5;
+
+	game.load.setPreloadSprite(A.loadingBar);
 
 	// load everything
 	game.load.image('background', 'assets/img/background.png');

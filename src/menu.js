@@ -3,7 +3,12 @@ Game.Menu = function (game) { };
 Game.Menu.prototype = {
     create: function () {
 	A.background = game.add.sprite(-382, 0, 'background');
+
 	A.title = game.add.sprite(5, 5, 'title', 0);
+	A.title.alpha = 0;
+	game.add.tween(A.title).to({ alpha: 1 }, 600, null, true, 250, 0, false);
+
+	A.paddle = A.score ? game.add.sprite(218, 61, 'paddle') : {};
 
 	A.keys = game.input.keyboard.createCursorKeys();
 	A.keys.up.onDown.add(this.endMenu, this);
@@ -29,13 +34,14 @@ Game.Menu.prototype = {
 
     endMenu: function () {
 	if (!A.timer) {
+	    A.paddle.alpha = 0;
 	    this.shiftTween(A.title);
 	    this.shiftTween(A.background);
 	    A.timer = game.time.now;
-	}
-	    
-	if (A.audio) {
-	    A.music.play('', 0, 0.7, true, true);
+
+	    if (A.audio) {
+		A.music.play('', 0, 0.7, true, true);
+	    }
 	}
     },
 };

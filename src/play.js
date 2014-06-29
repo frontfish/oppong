@@ -5,6 +5,7 @@ A.paddleSpeed = {
     y: 500,
 };
 A.ballSpeed = 200;
+A.delay = 0;
 
 Game.Play.prototype = {
     create: function () {
@@ -28,15 +29,18 @@ Game.Play.prototype = {
 	A.balls.forEachAlive(this.ballCollideMiddle, this);
 
 	this.controls();
-
-	if (A.balls.countLiving() === 0) {
-	    this.endPlay();
+	
+	if (A.timer && game.time.now - A.timer > A.delay) {
+	    A.timer = 0;
+	    game.state.start('Menu');
 	}
     },
 
     controls: function () {
-	A.paddle.body.velocity.y = A.keys.up.isDown ? -A.paddleSpeed.y : 0;
-	A.paddle.body.velocity.y += A.keys.down.isDown ? A.paddleSpeed.y : 0;
+	if (!A.timer) {
+	    A.paddle.body.velocity.y = A.keys.up.isDown ? -A.paddleSpeed.y : 0;
+	    A.paddle.body.velocity.y += A.keys.down.isDown ? A.paddleSpeed.y : 0;
+	}
 
 	vel = A.keys.left.isDown ? -A.paddleSpeed.x : 0;
 	vel += A.keys.right.isDown ? A.paddleSpeed.x : 0;	
@@ -44,7 +48,7 @@ Game.Play.prototype = {
     },
 
     shift: function (vel) {
-	if ((A.paddle.x < 150 && vel < 0) || (A.paddle.x > A.w - 150 && vel > 0)) {
+	if ((A.paddle.x < 150 && vel < 0) || (A.paddle.x > A.w - 150 && vel > 0) || A.timer) {
 	    vel = 0;
 	}
 
@@ -53,7 +57,8 @@ Game.Play.prototype = {
     },
 
     createBackground: function () {
-	A.background = game.add.sprite(-300, 0, 'background');
+	A.background = game.add.sprite(A.w / 2, 0, 'background');
+	A.background.anchor.x = 0.5;
 	game.physics.arcade.enable(A.background);
     },
 
@@ -129,7 +134,6 @@ Game.Play.prototype = {
     ballCollideMiddle: function (ball) {
 	if (Math.abs(ball.x - A.paddle.x) <= ball.body.halfWidth) {
 	    this.endPlay();
-	    ball.kill();
 	}
     },
 
@@ -159,10 +163,22 @@ Game.Play.prototype = {
 	}
     },
 
+    animateToMenu: function () {
+	A.delay = Math.abs(A.background.x - 218) * 5;
+
+	game.add.tween(A.background).to({ x: 218 }, A.delay, null, true, 0, 0, false);
+	game.add.tween(A.paddle).to({ x: 218, y: 61 }, A.delay, null, true, 0, 0, false);
+    },
+
     endPlay: function () {
+	A.balls.children[0].kill();
+	A.balls.children[1].kill();
+
 	if (A.audio) {
 	    A.sounds.die.play('', 0, 0.5, false, true);
 	}
-	game.state.start('End');
+	A.music.stop();
+	this.animateToMenu();
+	A.timer = game.time.now;
     },
 };
