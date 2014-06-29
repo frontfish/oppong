@@ -10,7 +10,8 @@ A.delay = 0;
 Game.Play.prototype = {
     create: function () {
 	game.physics.startSystem(Phaser.Physics.ARCADE);
-	A.keys = game.input.keyboard.createCursorKeys();
+
+	this.createKeys();
 
 	this.createBackground();
 	this.createBounds();
@@ -40,12 +41,12 @@ Game.Play.prototype = {
 
     controls: function () {
 	if (!A.timer) {
-	    A.paddle.body.velocity.y = A.keys.up.isDown ? -A.paddleSpeed.y : 0;
-	    A.paddle.body.velocity.y += A.keys.down.isDown ? A.paddleSpeed.y : 0;
+	    A.paddle.body.velocity.y = (A.keys.up.isDown || A.keys.W.isDown) ? -A.paddleSpeed.y : 0;
+	    A.paddle.body.velocity.y += (A.keys.down.isDown || A.keys.S.isDown) ? A.paddleSpeed.y : 0;
 	}
 
-	vel = A.keys.left.isDown ? -A.paddleSpeed.x : 0;
-	vel += A.keys.right.isDown ? A.paddleSpeed.x : 0;	
+	vel = (A.keys.left.isDown || A.keys.A.isDown) ? -A.paddleSpeed.x : 0;
+	vel += (A.keys.right.isDown || A.keys.D.isDown) ? A.paddleSpeed.x : 0;	
 	this.shift(vel);
     },
 
@@ -56,6 +57,15 @@ Game.Play.prototype = {
 
 	A.paddle.body.velocity.x = vel;
 	A.background.body.velocity.x = vel;
+    },
+
+    createKeys: function () {
+	A.keys = game.input.keyboard.createCursorKeys();
+
+	A.keys.A = game.input.keyboard.addKey(Phaser.Keyboard.A);
+	A.keys.S = game.input.keyboard.addKey(Phaser.Keyboard.S);
+	A.keys.D = game.input.keyboard.addKey(Phaser.Keyboard.D);
+	A.keys.W = game.input.keyboard.addKey(Phaser.Keyboard.W);
     },
 
     createBackground: function () {

@@ -16,6 +16,9 @@ Game.Menu.prototype = {
 
 	A.keys = game.input.keyboard.createCursorKeys();
 	A.keys.up.onDown.add(this.endMenu, this);
+	A.keys.W = game.input.keyboard.addKey(Phaser.Keyboard.W);
+	A.keys.W.onDown.add(this.endMenu, this);
+
 	this.createMute(this);
 
 	this.createText();
