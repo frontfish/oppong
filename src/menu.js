@@ -16,6 +16,7 @@ Game.Menu.prototype = {
 
 	A.keys = game.input.keyboard.createCursorKeys();
 	A.keys.up.onDown.add(this.endMenu, this);
+	this.createMute(this);
 
 	this.createText();
 
@@ -59,6 +60,26 @@ Game.Menu.prototype = {
 	    .to({ x: object.x + 369 }, 600, null, true, 200, 0, false)
 	    .to({ frame: 2 }, 1, null, true, 0, 0, false)
 	    .to({ x: object.x + 82 }, 400, null, true, 200, 0, false);
+    },
+
+    createMute: function (that) {
+	A.keys.mute = game.input.keyboard.addKey(Phaser.Keyboard.M);
+	A.keys.mute.onDown.add(this.toggleAudio, that);
+    },
+
+    toggleAudio: function () {
+	if (A.audio) {
+	    A.audio = false;
+	    if (A.music.isPlaying) {
+		A.music.pause();
+	    }
+	}
+	else {
+	    A.audio = true;
+	    if (A.music.paused) {
+		A.music.resume();
+	    }
+	}
     },
 
     endMenu: function () {

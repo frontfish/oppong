@@ -22,6 +22,8 @@ Game.Play.prototype = {
 	this.createBall(0, A.h / 2, 60 - Math.rand(120), 'beige');
 	this.createBall(A.w, A.h / 2, 240 - Math.rand(120), 'purple');
 	this.createScore();
+
+	Game.Menu.prototype.createMute(this);
     },
 
     update: function () {
